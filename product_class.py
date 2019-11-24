@@ -28,11 +28,16 @@ class Product:
         self.df = self.remove_nan(self.df)
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
         self.df['standardized'] = self.standardize_prices(self.df['amazon_price'])
-        self.df['derivative'] = self.derivative_prices(self.df['amazon_price'])
-#         self.mode = stats.mode(self.df['amazon_price'])
-#         self.std = stats.tstd(self.df['amazon_price'])
+        
+        # Check that price history is long enough to calculate derivative
+        if self.df['amazon_price'].count() > 2:
+            self.df['derivative'] = self.derivative_prices(self.df['amazon_price'])        
+
         self.mean = self.df['amazon_price'].mean()
         self.max = self.df['amazon_price'].max()
+
+        # self.mode = stats.mode(self.df['amazon_price'])
+        # self.std = stats.tstd(self.df['amazon_price'])
 
     def price_holiday_correlation(self, year=2018):
         '''Plot price history's correlation with a country's holidays
@@ -111,7 +116,7 @@ class Product:
         
         :param x: price history
         :type x: (list, np.ndarray, pd.Series)
-        :return: derivative of price history
+        # :return: derivative of price history
         :rtype: pd.Series
         '''
         assert isinstance(x, (list, np.ndarray, pd.Series))
