@@ -51,7 +51,7 @@ def save_products(product_ids, filename, ratings=True):
 
     try:
         # Obtain product dicts
-        products = api.query(product_ids, rating=True)
+        products = api.query(product_ids, rating=ratings)
         np.save(filename, products)
         print("Product Dictionaries saved to {0}".format(filename))
         return products
@@ -67,6 +67,6 @@ if __name__ == "__main__":
     electronics = '172282'
     # save_bestsellers_from_cat(electronics, "bestsellers.npy")
     bestsellers = np.load("bestsellers.npy", allow_pickle=True)
-    save_products(bestsellers[0:150], "product_electronics_test_ratings.npy", ratings=True)
+    save_products(bestsellers[150:300], "product_electronics_test_ratings.npy", ratings=True)
     # products = np.load("product_electronics_300_600.npy", allow_pickle=True)
     # print(len(products))
