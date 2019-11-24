@@ -15,7 +15,7 @@ def save_bestsellers_from_cat(cat, filename):
     assert isinstance(cat, str)
     assert isinstance(filename, str)
     assert len(cat) > 0 and len(filename) > 0
-    
+
     api_key = 'e6ihvarndmd2iee2bgeg60afm06gru9242g310tb4tv1kji72u57uon4us908d5h'
     api = keepa.Keepa(api_key)  
     # Obtain all bestsellers from category
@@ -25,7 +25,7 @@ def save_bestsellers_from_cat(cat, filename):
 
     return bestsellers
 
-def save_products(product_ids, filename):
+def save_products(product_ids, filename, ratings=True):
     '''Save product dicts from given ids into numpy file
     
     :param cat: product IDs
@@ -40,14 +40,18 @@ def save_products(product_ids, filename):
     assert isinstance(filename, str)
     assert len(filename) > 0
     # Keepa API limit
-    assert 0 < len(product_ids) <= 300
-
+    assert isinstance(ratings, bool)
+    if not ratings:
+        assert 0 < len(product_ids) <= 300
+    else:
+        # Query for ratings and reviews consumes more tokens
+        assert 0 < len(product_ids) <= 150
     api_key = 'e6ihvarndmd2iee2bgeg60afm06gru9242g310tb4tv1kji72u57uon4us908d5h'
     api = keepa.Keepa(api_key)   
 
     try:
         # Obtain product dicts
-        products = api.query(product_ids)
+        products = api.query(product_ids, rating=True)
         np.save(filename, products)
         print("Product Dictionaries saved to {0}".format(filename))
         return products
@@ -62,7 +66,7 @@ def save_products(product_ids, filename):
 if __name__ == "__main__":
     electronics = '172282'
     # save_bestsellers_from_cat(electronics, "bestsellers.npy")
-    # bestsellers = np.load("bestsellers.npy", allow_pickle=True)
-    # save_products(bestsellers[600:900], "product_electronics_600_900.npy")
+    bestsellers = np.load("bestsellers.npy", allow_pickle=True)
+    save_products(bestsellers[0:150], "product_electronics_test_ratings.npy", ratings=True)
     # products = np.load("product_electronics_300_600.npy", allow_pickle=True)
     # print(len(products))
