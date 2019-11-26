@@ -65,7 +65,7 @@ def save_products(product_ids, filename, ratings=True):
 
 if __name__ == "__main__":
     electronics = '172282'
-    # save_bestsellers_from_cat(electronics, "bestsellers.npy")
+    save_bestsellers_from_cat(electronics, "bestsellers.npy")
     bestsellers = np.load("bestsellers.npy", allow_pickle=True)
     save_products(bestsellers[150:300], "product_electronics_test_ratings.npy", ratings=True)
     # products = np.load("product_electronics_300_600.npy", allow_pickle=True)

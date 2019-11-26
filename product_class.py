@@ -27,6 +27,7 @@ class Product:
         d = {'amazon_time': product_dict['data']['AMAZON_time'], 'amazon_price': product_dict['data']['AMAZON']}
         self.df = pd.DataFrame(data=d)
         self.df = self.remove_nan(self.df)
+        self.df = self.df.fillna(method='ffill')
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
         self.df['standardized'] = self.standardize_prices(self.df['amazon_price'])
         

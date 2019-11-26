@@ -31,8 +31,8 @@ class Category:
         '''
         num = list()
         percents = list()
-        for i in range(len(product_list)):
-            sale, time, number, pct, decrease = saleDetector(product_list[i])
+        for i in range(len(self.product_list)):
+            sale, time, number, pct, decrease = Product.saleDetector(self.product_list[i])
             num.append(number)
             percents.append(pct)
                   
@@ -49,8 +49,8 @@ class Category:
         :rtype: float
         '''
         decrese_list = list()
-        for i in range(len(product_list)):
-            sale, time, number, pct, decrease = saleDetector(product[i])
+        for i in range(len(self.product_list)):
+            sale, time, number, pct, decrease = Product.saleDetector(self.product_list[i])
             if decrease != 0:
                 decrese_list.append(decrease)
         return sum(decrese_list)/len(decrese_list)
@@ -59,9 +59,13 @@ class Category:
     def price_variation(self):
         '''Calculate price variation using standardized price values
         
-        :return: [description]
-        :rtype: [type]
+        :return: a list of price variation on standarized price values
+        :rtype: list 
         '''
+        price_variation_list = list()
+        for p in self.product_list:
+            price_variation_list.append(p.df.standardized.diff().fillna(0))
+        return price_variation_list 
 
     def feature_correlation(self, feature_1, feature_2):
         '''Generate a plot for the category, showing the correlation between two features
@@ -90,8 +94,10 @@ class Category:
 
 
 if __name__ == "__main__":
-    products = list(np.load('product_electronics_50_price_history.npy', allow_pickle=True))
+    products = list(np.load('product_electronics_test_ratings.npy', allow_pickle=True))
     products = [Product(i) for i in products]
     cat = Category(products)
-    print(len(cat.product_list))
-    cat.holiday_correlation(2018, False)
+    # print(len(cat.product_list))
+    # cat.holiday_correlation(2018, False)
+    b = cat.price_variation()
+    print(b)
