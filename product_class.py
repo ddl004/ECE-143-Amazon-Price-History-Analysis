@@ -12,13 +12,14 @@ class Product:
     Modularize each product to store each feature as an attribute of a class. 
     Attributes: 
         Mean, Max, Mode, Standard Deviation, Normalized Amazon time Price History
-    Methods:
+    Functions:
         Holidays overlaid, Ability to detect sales, Derivative of Price History, SCatter plot with various features
         Regression Function
     '''
     
     def __init__(self, product_dict):
         # TODO: Add more asserts
+        #TODO: Remove multiple prices for same day and change precision to the year, month and day
         assert isinstance(product_dict, dict)
         
         self.product_dict = product_dict
@@ -35,41 +36,52 @@ class Product:
 
         self.mean = self.df['amazon_price'].mean()
         self.max = self.df['amazon_price'].max()
-
         # self.mode = stats.mode(self.df['amazon_price'])
         # self.std = stats.tstd(self.df['amazon_price'])
 
-    def price_holiday_correlation(self, year=2018):
+    def price_holiday_correlation(self, year=2018, plot=False):
         '''Plot price history's correlation with a country's holidays
 
         :param year: Year for which prices are to be plotted 
-        :type product: int
+        :type year: int
+        :param plot: Indicates whether to plot the data or not 
+        :type plot: bool
         :return: List of dates for which prices are available and their corresponding prices
         :rtype: list
         '''
         
+        assert isinstance(year, int) and year <=2019
         #Plot the amazon time price history for the given year and overlay a graph of holidays on top of that
-        year_index = [iter_date.year == year for iter_date in self.product_dict['data']['AMAZON_time']]
-        year_prices = list(self.df['amazon_price'])[np.where(year_index)]
-        year_dates = self.product_dict['data']['AMAZON_time'][np.where(year_index)]
-        print('Number of price data points for the year %d: %d'% (year, len(year_dates)))
+        # year_index = [iter_date.year == year for iter_date in self.product_dict['data']['AMAZON_time']]
+        # year_prices = list(self.df['amazon_price'])[np.where(year_index)]
+        # year_dates = self.product_dict['data']['AMAZON_time'][np.where(year_index)]
+        # print('Number of price data points for the year %d: %d'% (year, len(year_dates)))
+        df_year = self.df[['amazon_time', 'amazon_price']][self.df['amazon_time'].dt.year == year]
         
-        #Plot the dates against prices
-        fig, ax = plt.subplots(constrained_layout=True)
-        locator = mdates.AutoDateLocator()
-        formatter = mdates.AutoDateFormatter(locator)
-        ax.xaxis.set_major_locator(locator)
-        ax.xaxis.set_major_formatter(formatter)
-
-        ax.plot(year_dates, year_prices, '.')
-        ax.set_title('%d Price vs Holidays plotter' % (year))
-
         cal=UnitedStates()
         us_holidays, _ = zip(*cal.holidays(year))
-        for holiday in us_holidays:
-            plt.axvline(holiday, color = 'r')
+        
+        holiday_prices = self.df[['amazon_time', 'standardized']][self.df['amazon_time'].dt.date.isin(us_holidays)]
+        
+        if plot:
+            #Plot the dates against prices
+            fig, ax = plt.subplots(constrained_layout=True)
+            locator = mdates.AutoDateLocator()
+            formatter = mdates.AutoDateFormatter(locator)
+            ax.xaxis.set_major_locator(locator)
+            ax.xaxis.set_major_formatter(formatter)
             
-        return year_dates, year_prices
+            #Plot holiday lines
+            for holiday in us_holidays:
+                plt.axvline(holiday, color = 'r')
+
+            ax.plot(df_year['amazon_time'], df_year['amazon_price'], '.')
+            ax.set_title('%d Price vs Holidays plotter' % (year))
+        
+            ax.plot(holiday_prices['amazon_time'], holiday_prices['standardized'], 'x', color = 'g')
+            
+#         return df_year['amazon_time'], df_year['amazon_price']
+        return holiday_prices
 
     def remove_nan(self, product):
         '''Remove nan prices from price history
@@ -152,13 +164,14 @@ class Product:
         
         
 if __name__ == "__main__":
-    # products = list(np.load('office_products_data.npy', allow_pickle=True))
-    products = list(np.load('product_electronics_50_price_history.npy', allow_pickle=True))
+    products = list(np.load('office_products_data.npy', allow_pickle=True))
+    # products = list(np.load('product_electronics_50_price_history.npy', allow_pickle=True))
     sample_product = products[24]
     product_object = Product(sample_product)
     # print(product_object.amazon_price_history)
     print(product_object.df.head())
     print(product_object.mean)
     print(product_object.max)
-    print(product_object.saleDetector())
+    # print(product_object.saleDetector())
     # print(product_object.derivative_prices(product_object.df['amazon_price']))
+    product_object.price_holiday_correlation(2018, False)

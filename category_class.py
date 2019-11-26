@@ -20,8 +20,8 @@ class Category:
             assert all(isinstance(i, Product) for i in product_list)
 
         self.product_list = product_list
-        self.num_sales, self.percent_sale = self.calculate_avg_num_sales()
-        self.sale_decrease_percentage = self.calculate_avg_sale_perc()
+#         self.num_sales, self.percent_sale = self.calculate_avg_num_sales()
+#         self.sale_decrease_percentage = self.calculate_avg_sale_perc()
 
     def calculate_avg_num_sales(self):
         '''Calculate number of sales for products in category
@@ -69,6 +69,24 @@ class Category:
         :return: [description]
         :rtype: [type]
         '''
+        
+    def holiday_correlation(self, year=2018, plot=False):
+        '''Plot standardized avg price history correlation with a country's holidays
+
+        :param year: Year for which prices are to be plotted 
+        :type year: int
+        :param plot: Indicates whether to plot the data or not 
+        :type plot: bool
+        :return: List of dates for which prices are available and their corresponding prices
+        :rtype: list
+        '''
+        
+        holiday_df = self.product_list[0].price_holiday_correlation(year)
+        for i, product in enumerate(self.product_list[1:]):
+            sufix = ("_%d" % i, "_%d" % (i+1))
+            holiday_df = pd.merge_ordered(holiday_df, product.price_holiday_correlation(), on='amazon_time', suffixes = sufix)
+
+        print(holiday_df.head())
 
 
 if __name__ == "__main__":
@@ -76,3 +94,4 @@ if __name__ == "__main__":
     products = [Product(i) for i in products]
     cat = Category(products)
     print(len(cat.product_list))
+    cat.holiday_correlation(2018, False)
