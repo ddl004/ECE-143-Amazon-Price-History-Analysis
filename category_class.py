@@ -20,22 +20,41 @@ class Category:
             assert all(isinstance(i, Product) for i in product_list)
 
         self.product_list = product_list
-        self.num_sales = self.calculate_avg_num_sales()
-        self.sale_percentage = self.calculate_avg_sale_perc()
+        self.num_sales, self.percent_sale = self.calculate_avg_num_sales()
+        self.sale_decrease_percentage = self.calculate_avg_sale_perc()
 
     def calculate_avg_num_sales(self):
         '''Calculate number of sales for products in category
         
-        :return: [description]
-        :rtype: int
+        :return: the average number and percentage of sale of the category
+        :rtype: int, float
         '''
+        num = list()
+        percents = list()
+        for i in range(len(product_list)):
+            sale, time, number, pct, decrease = saleDetector(product_list[i])
+            num.append(number)
+            percents.append(pct)
+                  
+        res_num = sum(num)/len(num)
+        res_percent = sum(percents)/len(percents)
+        
+        return res_num, res_percent
+        
 
     def calculate_avg_sale_perc(self):
         '''Calculate avg sale percentage for products in category
         
-        :return: [description]
+        :return: the avg sale percentage(e.g. X% off)
         :rtype: float
         '''
+        decrese_list = list()
+        for i in range(len(product_list)):
+            sale, time, number, pct, decrease = saleDetector(product[i])
+            if decrease != 0:
+                decrese_list.append(decrease)
+        return sum(decrese_list)/len(decrese_list)
+        
 
     def price_variation(self):
         '''Calculate price variation using standardized price values
