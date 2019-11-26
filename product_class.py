@@ -144,11 +144,17 @@ class Product:
         meanValue = np.nanmean(price)
         sale_price = list()
         sale_time = list()
+        num = 0
         for i in range(len(price)):
             if price[i] < meanValue*threshold:
                 sale_price.append(price[i])
                 sale_time.append(times[i])
-        return sale_price, sale_time
+                num+=1
+        if len(sale_price) == 0:
+            decrease_percent = 0
+        else:
+            decrease_percent = (sum(sale_price)/len(sale_price)) / meanValue
+        return sale_price, sale_time, num, num / len(price), decrease_percent
         
         
 if __name__ == "__main__":
