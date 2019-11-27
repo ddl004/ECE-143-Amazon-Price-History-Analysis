@@ -19,7 +19,6 @@ class Product:
     
     def __init__(self, product_dict):
         # TODO: Add more asserts
-        #TODO: Remove multiple prices for same day and change precision to the year, month and day
         assert isinstance(product_dict, dict)
         
         self.product_dict = product_dict
@@ -37,8 +36,29 @@ class Product:
         self.mean = self.df['amazon_price'].mean()
         self.max = self.df['amazon_price'].max()
         self.min = self.df['amazon_price'].min()
-        # self.mode = stats.mode(self.df['amazon_price'])
-        # self.std = stats.tstd(self.df['amazon_price'])
+        
+        self.name = product_dict['title']
+        
+        try:
+            self.type = product_dict['type']
+        except:
+            print("Type data not available")
+        try:
+            if len(product_dict['data']['COUNT_REVIEWS'] >= 10):
+                self.num_reviews = np.median(product_dict['data']['COUNT_REVIEWS'][-10:]).astype(np.int32)
+            else:
+                self.num_reviews = product_dict['data']['COUNT_REVIEWS'][-1]
+
+            self.rating = product_dict['data']['RATING'][-1]*100
+
+        except:
+            print("Rating and Review data not available")
+
+        self.sale_prices, self.sale_times, self.num_sales, self.num_sales_percentage, self.sale_percentage = self.saleDetector()
+        # if not self.sale_percentage:
+        #     print(self.name)
+        #     print(self.mean)
+        #     print(self.min)
 
     def _clean_data(self):
         '''
@@ -162,16 +182,14 @@ class Product:
         
         return pd.Series(np.gradient(x.values), x.index, name='gradient')
 
-    def saleDetector(self, threshold=0.8):
+    def saleDetector(self, threshold=0.9):
         """
         To detect the sale price and timing
         :param: threshold
         :type: dict
         :return: two list that are price and time 
         """
-        # data = product['data']
-        # times = data['AMAZON_time']
-        # price = data['AMAZON']
+        # TODO: Add year as input, use mean for that year and return sales in that year
         assert isinstance(threshold, (int, float))
         assert 0 <= threshold <= 1
         
@@ -206,6 +224,8 @@ if __name__ == "__main__":
     print(product_object.mean)
     print(product_object.max)
     print(product_object.min)
+    print(product_object.num_reviews)
+    print(product_object.rating)
     # print(product_object.saleDetector())
     # print(product_object.derivative_prices(product_object.df['amazon_price']))
     # product_object.price_holiday_correlation(2018, False)
