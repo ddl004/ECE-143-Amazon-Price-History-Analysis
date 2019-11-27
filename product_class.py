@@ -50,12 +50,15 @@ class Product:
 
         assert(len(self.df['amazon_time']) > 0)
         assert(len(self.df['amazon_price']) > 0)    
+
         # Remove NaN entries so that none of the means are NaN
         self.df = self.remove_nan(self.df)
         # Groupby day and use the mean value (removes hour, min, sec)
         self.df = self.df.groupby(self.df.amazon_time.dt.date).mean()
         # Fill in missing days
-        idx = pd.date_range(start=self.df.index.min(), end=self.df.index.max())
+        # print(self.df.index.max())
+        # End-date set to december 1st, in case of sparse price history, last day of API
+        idx = pd.date_range(start=self.df.index.min(), end=datetime.date(year=2019,month=12,day=1))
         self.df = self.df.reindex(idx, fill_value=None).reset_index(level=0)
         self.df = self.df.rename(columns={'index':'amazon_time'})
         # Fill forward
@@ -198,7 +201,7 @@ if __name__ == "__main__":
     sample_product = products[24]
     product_object = Product(sample_product)
     # print(product_object.amazon_price_history)
-    # print(product_object.df.head())
+    print(product_object.df)
     print(product_object.product_dict['title'])
     print(product_object.mean)
     print(product_object.max)
