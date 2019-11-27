@@ -58,9 +58,7 @@ class Category:
             if decrease != 0:
                 decrese_list.append(decrease)
         
-        # sum(decrese_list)/len(decrese_list) is the average percentage of the product's price when on sale
-        # 1 - sum(decrese_list)/len(decrese_list) is the sale percentage
-        return 1- (sum(decrese_list)/len(decrese_list))
+        return sum(decrese_list)/len(decrese_list)
         
 
     def price_variation(self):

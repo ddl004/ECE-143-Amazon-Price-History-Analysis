@@ -209,7 +209,7 @@ class Product:
         if len(sale_price) == 0:
             decrease_percent = 0
         else:
-            decrease_percent = (sum(sale_price)/len(sale_price)) / meanValue
+            decrease_percent = 1 - ((sum(sale_price)/len(sale_price)) / meanValue)
         return sale_price, sale_time, num, num / len(price), decrease_percent
         
         
