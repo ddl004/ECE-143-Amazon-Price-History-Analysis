@@ -62,11 +62,43 @@ def save_products(product_ids, filename, ratings=True):
         print('Time to refill tokens: ', api.time_to_refill, '\n')
         print('Token Status: ', api.update_status())
 
+def save_products_with_price_history(num_products, npy_filenames, filename):
+    '''Given multiple lists of products dicts, save #num_products with the longest price histories
+    
+    :param num_products: number of products to save
+    :type num_products: int
+    :param npy_filenames: filenames of npy files with product dicts
+    :type npy_filenames: list of str
+    :param filename: output filename to save products with longest price history to
+    :type filename: str
+    :return: products with the longest price history
+    :rtype: list of dict
+    '''
+    assert isinstance(num_products, int)
+    assert 0 < num_products
+    assert all(isinstance(i, str) for i in npy_filenames) or isinstance(npy_filenames, str)
+
+    products = []
+    if isinstance(npy_filenames, list):
+        for i in npy_filenames:
+            products += list(np.load(i, allow_pickle=True))
+    else:
+        products = list(np.load(i, allow_pickle=True))
+    
+    products.sort(key=(lambda product : len(product['data']['AMAZON'])), reverse=True)
+    products = products[0:num_products]
+    np.save(filename, products)
+    print("Saved {0} Product Dictionaries with the longest price history to {1}".format(str(num_products), filename))
+
+    return products
+
 
 if __name__ == "__main__":
     electronics = '172282'
-    save_bestsellers_from_cat(electronics, "bestsellers.npy")
-    bestsellers = np.load("bestsellers.npy", allow_pickle=True)
-    save_products(bestsellers[150:300], "product_electronics_test_ratings.npy", ratings=True)
+    # save_bestsellers_from_cat(electronics, "bestsellers.npy")
+    # bestsellers = np.load("bestsellers.npy", allow_pickle=True)
+    # save_products(bestsellers[150:300], "product_electronics_test_ratings.npy", ratings=True)
     # products = np.load("product_electronics_300_600.npy", allow_pickle=True)
     # print(len(products))
+    filenames = ["product_electronics_0_150_ratings.npy","product_electronics_150_300_ratings.npy","product_electronics_300_450_ratings.npy", "product_electronics_450_600_ratings.npy"]
+    save_products_with_price_history(200, filenames, "product_electronics_sorted_ph.npy")

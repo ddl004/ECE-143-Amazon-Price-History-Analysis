@@ -23,11 +23,10 @@ class Product:
         assert isinstance(product_dict, dict)
         
         self.product_dict = product_dict
-        
         d = {'amazon_time': product_dict['data']['AMAZON_time'], 'amazon_price': product_dict['data']['AMAZON']}
         self.df = pd.DataFrame(data=d)
-        self.df = self.remove_nan(self.df)
-        self.df = self.df.fillna(method='ffill')
+        self._clean_data()
+
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
         self.df['standardized'] = self.standardize_prices(self.df['amazon_price'])
         
@@ -37,8 +36,31 @@ class Product:
 
         self.mean = self.df['amazon_price'].mean()
         self.max = self.df['amazon_price'].max()
+        self.min = self.df['amazon_price'].min()
         # self.mode = stats.mode(self.df['amazon_price'])
         # self.std = stats.tstd(self.df['amazon_price'])
+
+    def _clean_data(self):
+        '''
+        Given the initial dataframe, do the following:
+            1. Groupby the day and use the mean value for that day
+            2. Add in missing days without a price history, with default value NaN
+            3. Fill forward (assumes that price has remained the same)
+        '''
+
+        assert(len(self.df['amazon_time']) > 0)
+        assert(len(self.df['amazon_price']) > 0)    
+        # Remove NaN entries so that none of the means are NaN
+        self.df = self.remove_nan(self.df)
+        # Groupby day and use the mean value (removes hour, min, sec)
+        self.df = self.df.groupby(self.df.amazon_time.dt.date).mean()
+        # Fill in missing days
+        idx = pd.date_range(start=self.df.index.min(), end=self.df.index.max())
+        self.df = self.df.reindex(idx, fill_value=None).reset_index(level=0)
+        self.df = self.df.rename(columns={'index':'amazon_time'})
+        # Fill forward
+        self.df = self.df.fillna(method='ffill')
+        assert not self.df.isnull().values.any()
 
     def price_holiday_correlation(self, year=2018, plot=False):
         '''Plot price history's correlation with a country's holidays
@@ -149,7 +171,7 @@ class Product:
         # price = data['AMAZON']
         assert isinstance(threshold, (int, float))
         assert 0 <= threshold <= 1
-
+        
         times = self.df['amazon_time'].values
         price = self.df['amazon_price'].values
         assert len(times) == len(price)
@@ -171,14 +193,16 @@ class Product:
         
         
 if __name__ == "__main__":
-    products = list(np.load('office_products_data.npy', allow_pickle=True))
-    # products = list(np.load('product_electronics_50_price_history.npy', allow_pickle=True))
+    # products = list(np.load('office_products_data.npy', allow_pickle=True))
+    products = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
     sample_product = products[24]
     product_object = Product(sample_product)
     # print(product_object.amazon_price_history)
-    print(product_object.df.head())
+    # print(product_object.df.head())
+    print(product_object.product_dict['title'])
     print(product_object.mean)
     print(product_object.max)
+    print(product_object.min)
     # print(product_object.saleDetector())
     # print(product_object.derivative_prices(product_object.df['amazon_price']))
-    product_object.price_holiday_correlation(2018, False)
+    # product_object.price_holiday_correlation(2018, False)
