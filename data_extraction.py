@@ -95,10 +95,19 @@ def save_products_with_price_history(num_products, npy_filenames, filename):
 
 if __name__ == "__main__":
     electronics = '172282'
+    office_products = '1064954'
+
+    # save_bestsellers_from_cat(office_products, "office_products_bestsellers.npy")
+    office_products_bestsellers = np.load("office_products_bestsellers.npy", allow_pickle=True)
+    save_products(office_products_bestsellers[150:300], "office_products_0_150_ratings.npy", ratings=True)
+
+    # office_products_filenames = ["office_products_0_150_ratings.npy","office_products_150_300_ratings.npy","office_products_300_450_ratings.npy", "office_products_450_600_ratings.npy"]
+    # save_products_with_price_history(200, office_products_filenames, "office_products_sorted_ph.npy")
+
     # save_bestsellers_from_cat(electronics, "bestsellers.npy")
     # bestsellers = np.load("bestsellers.npy", allow_pickle=True)
     # save_products(bestsellers[150:300], "product_electronics_test_ratings.npy", ratings=True)
     # products = np.load("product_electronics_300_600.npy", allow_pickle=True)
     # print(len(products))
-    filenames = ["product_electronics_0_150_ratings.npy","product_electronics_150_300_ratings.npy","product_electronics_300_450_ratings.npy", "product_electronics_450_600_ratings.npy"]
-    save_products_with_price_history(200, filenames, "product_electronics_sorted_ph.npy")
+    # filenames = ["product_electronics_0_150_ratings.npy","product_electronics_150_300_ratings.npy","product_electronics_300_450_ratings.npy", "product_electronics_450_600_ratings.npy"]
+    # save_products_with_price_history(200, filenames, "product_electronics_sorted_ph.npy")
