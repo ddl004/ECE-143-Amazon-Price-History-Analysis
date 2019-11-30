@@ -96,10 +96,21 @@ def save_products_with_price_history(num_products, npy_filenames, filename):
 if __name__ == "__main__":
     electronics = '172282'
     office_products = '1064954'
+    softwares = '229534'
+
+    # save_bestsellers_from_cat(softwares, "software_products_bestsellers.npy")
+    # software_products_bestsellers = np.load("software_products_bestsellers.npy", allow_pickle=True)
+    # save_products(software_products_bestsellers[560:570], "software_products_560_570_ratings.npy", ratings=True)
+
+    # import glob
+    # print(glob.glob('*.npy'))
+    filenames = ['software_products_520_540_ratings.npy', 'software_products_200_210_ratings.npy', 'software_products_170_180_ratings.npy', 'software_products_180_190_ratings.npy', 'software_products_150_160_ratings.npy', 'software_products_460_470_ratings.npy', 'software_products_390_400_ratings.npy', 'software_products_540_560_ratings.npy', 'software_products_440_450_ratings.npy', 'software_products_250_260_ratings.npy', 'software_products_270_290_ratings.npy', 'software_products_220_240_ratings.npy', 'software_products_310_330_ratings.npy', 'software_products_290_310_ratings.npy', 'software_products_400_420_ratings.npy', 'software_products_350_370_ratings.npy', 'software_products_210_220_ratings.npy', 'software_products_260_270_ratings.npy', 'software_products_0_150_ratings.npy', 'software_products_370_390_ratings.npy', 'software_products_500_520_ratings.npy', 'software_products_330_350_ratings.npy', 'software_products_450_460_ratings.npy', 'software_products_470_490_ratings.npy', 'software_products_160_170_ratings.npy', 'software_products_420_440_ratings.npy', 'software_products_190_200_ratings.npy', 'software_products_240_250_ratings.npy', 'software_products_490_500_ratings.npy']
+    save_products_with_price_history(200, filenames, "product_software_sorted_ph.npy")
+
 
     # save_bestsellers_from_cat(office_products, "office_products_bestsellers.npy")
-    office_products_bestsellers = np.load("office_products_bestsellers.npy", allow_pickle=True)
-    save_products(office_products_bestsellers[150:300], "office_products_0_150_ratings.npy", ratings=True)
+    # office_products_bestsellers = np.load("office_products_bestsellers.npy", allow_pickle=True)
+    # save_products(office_products_bestsellers[150:300], "office_products_0_150_ratings.npy", ratings=True)
 
     # office_products_filenames = ["office_products_0_150_ratings.npy","office_products_150_300_ratings.npy","office_products_300_450_ratings.npy", "office_products_450_600_ratings.npy"]
     # save_products_with_price_history(200, office_products_filenames, "office_products_sorted_ph.npy")
@@ -111,3 +122,8 @@ if __name__ == "__main__":
     # print(len(products))
     # filenames = ["product_electronics_0_150_ratings.npy","product_electronics_150_300_ratings.npy","product_electronics_300_450_ratings.npy", "product_electronics_450_600_ratings.npy"]
     # save_products_with_price_history(200, filenames, "product_electronics_sorted_ph.npy")
+
+
+    # api_key = 'e6ihvarndmd2iee2bgeg60afm06gru9242g310tb4tv1kji72u57uon4us908d5h'
+    # api = keepa.Keepa(api_key)   
+    # print('Time to refill tokens: ', api.time_to_refill, '\n')
