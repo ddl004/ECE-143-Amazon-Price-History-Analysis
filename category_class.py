@@ -110,12 +110,14 @@ class Category:
         for i, product in enumerate(self.product_list[1:]):
             sufix = ("_%d" % i, "_%d" % (i+1))
             holiday_df = pd.merge_ordered(holiday_df, product.price_holiday_correlation(), on='amazon_time', suffixes = sufix)
-
-        hol_prices = holiday_df if holiday_df['amazon_time'] in top_hols_dates
-
-        print(holiday_df.head())
-        pritn('test')
-        return holiday_df
+        
+        holiday_df = holiday_df.loc[holiday_df['amazon_time'].isin(top_hols_dates)]
+        holiday_avg = holiday_df.mean(1)
+        holiday_avg.index = top_hols
+        if plot:
+            self.plot_radar(holiday_avg)
+        
+        return holiday_df, holiday_avg
 
 
 if __name__ == "__main__":
