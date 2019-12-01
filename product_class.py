@@ -119,12 +119,13 @@ class Product:
             
             #Plot holiday lines
             for holiday in us_holidays:
-                plt.axvline(holiday, color = 'r')
+                # plt.axvline(holiday, color = 'r')
+                pass
 
-            ax.plot(df_year['amazon_time'], df_year['standardized'], '.')
+            ax.plot(df_year['amazon_time'], df_year['standardized'])
             ax.set_title('%d Price vs Holidays plotter' % (year))
         
-            ax.plot(holiday_prices['amazon_time'], holiday_prices['standardized'], 'x', color = 'g')
+            # ax.plot(holiday_prices['amazon_time'], holiday_prices['standardized'], 'x', color = 'g')
             print("test")
             
 #         return df_year['amazon_time'], df_year['amazon_price']
