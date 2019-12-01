@@ -102,7 +102,7 @@ class Product:
         # year_prices = list(self.df['amazon_price'])[np.where(year_index)]
         # year_dates = self.product_dict['data']['AMAZON_time'][np.where(year_index)]
         # print('Number of price data points for the year %d: %d'% (year, len(year_dates)))
-        df_year = self.df[['amazon_time', 'amazon_price']][self.df['amazon_time'].dt.year == year]
+        df_year = self.df[:][self.df['amazon_time'].dt.year == year]
         
         cal=UnitedStates()
         us_holidays, _ = zip(*cal.holidays(year))
@@ -121,10 +121,11 @@ class Product:
             for holiday in us_holidays:
                 plt.axvline(holiday, color = 'r')
 
-            ax.plot(df_year['amazon_time'], df_year['amazon_price'], '.')
+            ax.plot(df_year['amazon_time'], df_year['standardized'], '.')
             ax.set_title('%d Price vs Holidays plotter' % (year))
         
             ax.plot(holiday_prices['amazon_time'], holiday_prices['standardized'], 'x', color = 'g')
+            print("test")
             
 #         return df_year['amazon_time'], df_year['amazon_price']
         return holiday_prices

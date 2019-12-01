@@ -1,12 +1,12 @@
 from product_class import Product
 
 import numpy as np
-# from scipy import stats
-# import datetime
-# import matplotlib.dates as mdates
+from scipy import stats
+import datetime
+import matplotlib.dates as mdates
 from matplotlib import pyplot as plt
-# from workalendar.usa import UnitedStates
-# from operator import itemgetter
+from workalendar.usa import UnitedStates
+from operator import itemgetter
 import pandas as pd
 
 class Category:
@@ -102,13 +102,20 @@ class Category:
         :return: List of dates for which prices are available and their corresponding prices
         :rtype: list
         '''
-        
+        top_hols = ['New year', 'Independence Day', 'Thanksgiving Day', 'Christmas Day']
+        cal = UnitedStates()
+        top_hols_dates = [hol[0] for hol in cal.holidays(year) if hol[1] in top_hols]
+
         holiday_df = self.product_list[0].price_holiday_correlation(year)
         for i, product in enumerate(self.product_list[1:]):
             sufix = ("_%d" % i, "_%d" % (i+1))
             holiday_df = pd.merge_ordered(holiday_df, product.price_holiday_correlation(), on='amazon_time', suffixes = sufix)
 
+        hol_prices = holiday_df if holiday_df['amazon_time'] in top_hols_dates
+
         print(holiday_df.head())
+        pritn('test')
+        return holiday_df
 
 
 if __name__ == "__main__":
