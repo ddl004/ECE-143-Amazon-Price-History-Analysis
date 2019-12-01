@@ -184,7 +184,7 @@ class Product:
         
         return pd.Series(np.gradient(x.values), x.index, name='gradient')
 
-    def saleDetector(self, threshold=0.9):
+    def saleDetector(self, threshold=0.9, year=2018):
         """
         To detect the sale price and timing
         :param: threshold
@@ -194,9 +194,13 @@ class Product:
         # TODO: Add year as input, use mean for that year and return sales in that year
         assert isinstance(threshold, (int, float))
         assert 0 <= threshold <= 1
+        assert isinstance(year, int) and year <=2019
         
-        times = self.df['amazon_time'].values
-        price = self.df['amazon_price'].values
+        
+        df_year = self.df[:][self.df['amazon_time'].dt.year == year]
+        times = list(df_year['amazon_time'].values)
+        price = list(df_year['amazon_price'].values)
+                  
         assert len(times) == len(price)
         
         meanValue = np.nanmean(price)
