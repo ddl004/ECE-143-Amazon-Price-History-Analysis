@@ -126,7 +126,6 @@ class Product:
             ax.set_title('%d Price vs Holidays plotter' % (year))
         
             # ax.plot(holiday_prices['amazon_time'], holiday_prices['standardized'], 'x', color = 'g')
-            print("test")
             
 #         return df_year['amazon_time'], df_year['amazon_price']
         return holiday_prices
