@@ -191,7 +191,6 @@ class Product:
         :type: dict
         :return: two list that are price and time 
         """
-        # TODO: Add year as input, use mean for that year and return sales in that year
         assert isinstance(threshold, (int, float))
         assert 0 <= threshold <= 1
         assert isinstance(year, int) and year <=2019
@@ -200,7 +199,11 @@ class Product:
         df_year = self.df[:][self.df['amazon_time'].dt.year == year]
         times = list(df_year['amazon_time'].values)
         price = list(df_year['amazon_price'].values)
-                  
+        
+        if(not len(price)):
+            print("Data not available for this year")
+            return None, None, None, None, None
+            
         assert len(times) == len(price)
         
         meanValue = np.nanmean(price)

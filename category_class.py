@@ -23,20 +23,21 @@ class Category:
         self.num_sales, self.percent_sale = self.calculate_avg_num_sales()
         self.sale_decrease_percentage = self.calculate_avg_sale_perc()
 
-    def calculate_avg_num_sales(self):
+    def calculate_avg_num_sales(self, year=2018):
         '''Calculate number of sales for products in category
         
         :return: the average number and percentage of sale of the category
         :rtype: int, float
         '''
-        # TODO: Add year as input
-
+        assert isinstance(year, int) and year <=2019
+        
         num = list()
         percents = list()
         for i in range(len(self.product_list)):
-            sale, time, number, pct, decrease = Product.saleDetector(self.product_list[i])
-            num.append(number)
-            percents.append(pct)
+            sale, time, number, pct, decrease = self.product_list[i].saleDetector(year=year)
+            if number != None and pct != None:
+                num.append(number)
+                percents.append(pct)
                   
         res_num = sum(num)/len(num)
         res_percent = sum(percents)/len(percents)
@@ -44,18 +45,18 @@ class Category:
         return res_num, res_percent
         
 
-    def calculate_avg_sale_perc(self):
+    def calculate_avg_sale_perc(self, year=2018):
         '''Calculate avg sale percentage for products in category
         
         :return: the avg sale percentage(e.g. X% off)
         :rtype: float
         '''
-        # TODO: Add year as input
+        assert isinstance(year, int) and year <=2019
 
         decrese_list = list()
         for i in range(len(self.product_list)):
-            sale, time, number, pct, decrease = Product.saleDetector(self.product_list[i])
-            if decrease != 0:
+            sale, time, number, pct, decrease = self.product_list[i].saleDetector(year=year)
+            if decrease != 0 and decrease != None:
                 decrese_list.append(decrease)
         
         return sum(decrese_list)/len(decrese_list)
@@ -133,7 +134,9 @@ if __name__ == "__main__":
     products = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
     products = [Product(i) for i in products]
     cat = Category(products)
-    cat.feature_correlation('rating','sale_percentage')
+    print(cat.num_sales)
+    print(cat.sale_decrease_percentage)
+    # cat.feature_correlation('rating','sale_percentage')
     # print(len(cat.product_list))
     # cat.holiday_correlation(2018, False)
     # b = cat.price_variation()
