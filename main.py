@@ -113,10 +113,94 @@ def time_price(cat1, cat2, cat3, cat4):
     frame = {'Office Products': time_price_1, 'Software': time_price_2, 'Electronics': time_price_3, 'Toys': time_price_4}
     time_price_df = pd.DataFrame(frame)
     plot_time_price(data = time_price_df)
+    
+def plot_average_derivative_prices(data):
+    colors = ['b', 'y', 'g', 'r']
+    fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
+    fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
+    locator = mdates.MonthLocator(interval=3)
+    formatter = mdates.DateFormatter('%b')
+    
+    for ax, data_item, color in zip(axes.flat, data.items(), colors):
+        title = data_item[0]
+        d = data_item[1]
+        
+        ax.fill_between(d.index[1:], d.values[1:], 0, where=d.values[1:] >= 0, facecolor='green', interpolate=True, alpha=0.7)
+        ax.fill_between(d.index[1:], d.values[1:], 0, where=d.values[1:] <= 0, facecolor='red', interpolate=True, alpha=0.7)
+        
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(formatter)
+        
+        ax.set_title(title,weight='bold', size=20, position=(0.5, 1.03), color = color,  
+                     horizontalalignment='center', verticalalignment='center')
+    plt.savefig('average_derivative_prices.jpg')
+    plt.show()
+    
+def average_derivative_prices(cat1, cat2, cat3, cat4):
+    adp1 = cat1.average_derivative_prices(2018, False)
+    adp2 = cat2.average_derivative_prices(2018, False)
+    adp3 = cat3.average_derivative_prices(2018, False)
+    adp4 = cat4.average_derivative_prices(2018, False)
+    
+    frame = {'Office Products': adp1, 'Software': adp2, 'Electronics': adp3, 'Toys': adp4}
+    adp_df = pd.DataFrame(frame)
+    plot_average_derivative_prices(data = adp_df)
+    
+def plot_christmas_history(data):
+    colors = ['b', 'y', 'g', 'r']
+    fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
+    fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
+    
+    for ax, data_item, color in zip(axes.flat, data.items(), colors):
+        title = data_item[0]
+        d = data_item[1]
+        
+        ax.plot(d.index, d.values, color = color)
+        
+        ax.set_title(title,weight='bold', size=20, position=(0.5, 1.03), color = color,  
+                     horizontalalignment='center', verticalalignment='center')
+    plt.savefig('average_price_christmas.jpg')
+    plt.show()
+    
+def christmas_history_price(cat1, cat2, cat3, cat4):
+    apc1 = cat1.average_price_christmas()
+    apc2 = cat2.average_price_christmas()
+    apc3 = cat3.average_price_christmas()
+    apc4 = cat4.average_price_christmas()
+    
+    frame = {'Office Products': apc1, 'Software': apc2, 'Electronics': apc3, 'Toys': apc4}
+    apc_df = pd.DataFrame(frame)
+    plot_christmas_history(data = apc_df)
+
+def plot_average_price_per_month(data):
+    colors = ['b', 'y', 'g', 'r']
+    fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
+    fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
+    
+    for ax, data_item, color in zip(axes.flat, data.items(), colors):
+        title = data_item[0]
+        d = data_item[1]
+        
+        ax.plot(d.index, d.values, color = color)
+        
+        ax.set_title(title,weight='bold', size=20, position=(0.5, 1.03), color = color,  
+                     horizontalalignment='center', verticalalignment='center')
+    plt.savefig('average_price_per_month.jpg')
+    plt.show()
+    
+def average_price_per_month_price(cat1, cat2, cat3, cat4):
+    appm1 = cat1.average_price_per_month()
+    appm2 = cat2.average_price_per_month()
+    appm3 = cat3.average_price_per_month()
+    appm4 = cat4.average_price_per_month()
+    
+    frame = {'Office Products': appm1, 'Software': appm2, 'Electronics': appm3, 'Toys': appm4}
+    appm_df = pd.DataFrame(frame)
+    plot_christmas_history(data = appm_df)
 
 if __name__ == "__main__":
     products1 = list(np.load('office_products_sorted_ph.npy', allow_pickle=True))
-    products2 = list(np.load('software.npy', allow_pickle=True))
+    products2 = list(np.load('product_software_sorted_ph.npy', allow_pickle=True))
     products3 = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
     products4 = list(np.load('toy_products_sorted_ph.npy', allow_pickle=True))
 
@@ -130,5 +214,7 @@ if __name__ == "__main__":
     cat3 = Category(products3)
     cat4 = Category(products4)
 
-    plot_holiday(cat1, cat2, cat3, cat4)
-    time_price(cat1, cat2, cat3, cat4)
+    # plot_holiday(cat1, cat2, cat3, cat4)
+    # time_price(cat1, cat2, cat3, cat4)
+    # average_derivative_prices(cat1, cat2, cat3, cat4)
+    average_price_per_month_price(cat1, cat2, cat3, cat4)
