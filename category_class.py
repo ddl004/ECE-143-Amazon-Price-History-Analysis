@@ -80,6 +80,8 @@ class Category:
         :type feature_1: [type]
         :param feature_2: [description]
         :type feature_2: [type]
+        :return: feature 1 and feature 2 for all products
+        :rtype: list 
         '''
         assert isinstance(feature_1, str)
         assert isinstance(feature_2, str)
@@ -89,7 +91,7 @@ class Category:
 
         assert len(x) == len(y)
 
-        plt.scatter(x,y)
+        return x,y
 
         
         
@@ -125,8 +127,8 @@ if __name__ == "__main__":
     products = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
     products = [Product(i) for i in products]
     cat = Category(products)
-    print(cat.num_sales)
-    print(cat.sale_decrease_percentage)
+    # print(cat.num_sales)
+    # print(cat.sale_decrease_percentage)
     # cat.feature_correlation('rating','sale_percentage')
     # print(len(cat.product_list))
     # cat.holiday_correlation(2018, False)

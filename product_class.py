@@ -27,7 +27,7 @@ class Product:
         self._clean_data()
 
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
-        self.df['standardized'] = self.standardize_prices(self.df['amazon_price'])
+        self.df['standardized'] = self.standardize_prices()
         
         # Check that price history is long enough to calculate derivative
         if self.df['amazon_price'].count() > 2:
@@ -53,6 +53,8 @@ class Product:
 
         except:
             print("Rating and Review data not available")
+            self.num_reviews = None
+            self.rating = None
 
         self.sale_prices, self.sale_times, self.num_sales, self.num_sales_percentage, self.sale_percentage = self.saleDetector()
         # if not self.sale_percentage:
@@ -143,20 +145,16 @@ class Product:
 
         return product.dropna()
 
-    def standardize_prices(self, x):
-        '''Given an iterable list of prices, standardize the prices
+    def standardize_prices(self):
+        '''Given an iterable list of prices, standardize the prices using stats from year
         Data is centered at 0 mean with unit variance
 
-        :param x: price history
-        :type x: (list, np.ndarray, pd.Series)
         :return: z-score standardized price history
         :rtype: np.ndarray
         '''
+        assert isinstance(self.df, pd.DataFrame)
 
-        assert isinstance(x, (list, np.ndarray, pd.Series))
-        assert all(~np.isnan(i) for i in x)
-
-        return stats.zscore(x)
+        return self.df.groupby(self.df.amazon_time.dt.year).amazon_price.transform(lambda i: stats.zscore(i))        
 
     def normalize_prices(self, x):
         '''Normalize an iterable list of prices to range (0,1)
@@ -201,7 +199,7 @@ class Product:
         price = list(df_year['amazon_price'].values)
         
         if(not len(price)):
-            print("Data not available for this year")
+            print("Product Data not available for Year {0}".format(year))
             return None, None, None, None, None
             
         assert len(times) == len(price)
