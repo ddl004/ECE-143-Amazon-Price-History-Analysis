@@ -122,6 +122,15 @@ class Category:
         
         return holiday_df, holiday_avg
 
+    def time_price(self, year=2018, plot=False):
+        standard_df = self.product_list[0].df[['amazon_time', 'standardized']][self.product_list[0].df['amazon_time'].dt.year == year]
+        for i, product in enumerate(self.product_list[1:]):
+            suffix = ("_%d" % i, "_%d" % (i+1))
+            standard_df = pd.merge_ordered(standard_df, product.df[['amazon_time', 'standardized']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
+        standard_df = standard_df.set_index(['amazon_time'])
+        standard_df = standard_df.mean(1)
+        return standard_df
+
 
 if __name__ == "__main__":
     products = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
