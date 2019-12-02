@@ -11,6 +11,49 @@ from operator import itemgetter
 import pandas as pd
 from math import pi
 
+def plot_time_price(data):
+    colors = ['b', 'y', 'g', 'r']
+    fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
+    fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
+    locator = mdates.MonthLocator(interval=3)
+    formatter = mdates.DateFormatter('%b')
+    
+    cal=UnitedStates()
+    #Goal: add annotations to the following four holidays: ['New year', 'Independence Day', 'Thanksgiving Day', 'Christmas Day']
+    ann_labels = ['New year', 'Independence Day', 'Thanksgiving Day', 'Christmas Day']
+    top_hols_dates = [hol[0] for hol in cal.holidays(data.index[0].year) if hol[1] in ann_labels] #Holidays as date_time objects
+    
+    xy_loc = [[(0,-70), (0,100), (-100,-70), (-50,80)], [(0,-70), (0,70), (-50,-70), (0,-70)], [(0,-70), (0,70), (-50,-70), (0,-70)], [(0,-70), (0,70), (-50,-70), (0,-70)]]
+    
+    for ax, data_item, color, xy_loc_1 in zip(axes.flat, data.items(), colors, xy_loc):
+        title = data_item[0]
+        d = data_item[1]
+        
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(formatter)
+        
+        ax.plot(d.index, d.values, color = color)
+        ax.plot(d.index, np.zeros(len(d.index)), color='grey')
+        ax.set_title(title,weight='bold', size=20, position=(0.5, 1.03), color = color,  
+                     horizontalalignment='center', verticalalignment='center')
+        
+        ax.set_yticks(np.arange(-0.5,0.6,0.1))
+    
+        for hol, hol_date, xy_loc_2 in zip(ann_labels, top_hols_dates, xy_loc_1):
+            if title == 'Office Products':
+                ax.annotate(hol,
+                    xy=(hol_date, d.loc[hol_date]), xycoords='data',
+                    xytext=xy_loc_2, textcoords='offset points',
+                    size=20,
+                    arrowprops=dict(arrowstyle="->"))
+                      
+            else:
+                ax.annotate('',
+                    xy=(hol_date, d.loc[hol_date]), xycoords='data',
+                    xytext=(-50, 30), textcoords='offset points',
+                    arrowprops=dict(arrowstyle="->"))
+    plt.savefig('test1.jpg')
+
 def plot_radar(data):
     
     min_label = data.min().min() - 0.1
