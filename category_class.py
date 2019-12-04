@@ -132,39 +132,42 @@ class Category:
         return standard_df
     
     def average_derivative_prices(self, year=2018, plot=False):
-        prices_df = self.product_list[0].df[['amazon_time', 'amazon_price']][self.product_list[0].df['amazon_time'].dt.year == year]
+        prices_df = self.product_list[0].df[['amazon_time', 'standardized']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
-            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'amazon_price']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
+            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'standardized']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
         prices_df = prices_df.set_index(['amazon_time'])
         prices_df = prices_df.mean(1)
         prices_df = prices_df.diff().fillna(0)
         return prices_df
     
     def average_price_christmas(self):
-        christmas_df = self.product_list[0].df[['amazon_time', 'amazon_price']][(self.product_list[0].df['amazon_time'].dt.day == 25) & (self.product_list[0].df['amazon_time'].dt.month == 12)]
+        christmas_df = self.product_list[0].df[['amazon_time', 'standardized_all']][(self.product_list[0].df['amazon_time'].dt.day == 25) & (self.product_list[0].df['amazon_time'].dt.month == 12)]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
-            christmas_df = pd.merge_ordered(christmas_df, product.df[['amazon_time', 'amazon_price']][(product.df['amazon_time'].dt.day == 25) & (product.df['amazon_time'].dt.month == 12)], on='amazon_time', suffixes=suffix)
+            christmas_df = pd.merge_ordered(christmas_df, product.df[['amazon_time', 'standardized_all']][(product.df['amazon_time'].dt.day == 25) & (product.df['amazon_time'].dt.month == 12)], on='amazon_time', suffixes=suffix)
         christmas_df = christmas_df.set_index(['amazon_time'])
-        christmas_df = christmas_df.mean(1)
+        
+        christmas_df = christmas_df.mean(axis=1)
         return christmas_df
 
     def average_price_per_month(self, year=2018):
-        prices_df = self.product_list[0].df[['amazon_time', 'amazon_price']][self.product_list[0].df['amazon_time'].dt.year == year]
+        prices_df = self.product_list[0].df[['amazon_time', 'standardized_all']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
-            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'amazon_price']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
+            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'standardized_all']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
         prices_df = prices_df.set_index(['amazon_time'])
         prices_df = prices_df.mean(1)
         prices_df = prices_df.groupby(prices_df.index.month).mean()
+        prices_df.index = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         return prices_df
     
 if __name__ == "__main__":
     products = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
     products = [Product(i) for i in products]
     cat = Category(products)
-    print(cat.average_price_per_month())
+    # print(cat.average_price_per_month())
+    print(cat.average_price_christmas())
     # print(cat.num_sales)
     # print(cat.sale_decrease_percentage)
     # cat.feature_correlation('rating','sale_percentage')

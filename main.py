@@ -155,7 +155,7 @@ def plot_christmas_history(data):
         title = data_item[0]
         d = data_item[1]
         
-        ax.plot(d.index, d.values, color = color)
+        ax.plot(d.index.year, d.values, color = color)
         
         ax.set_title(title,weight='bold', size=20, position=(0.5, 1.03), color = color,  
                      horizontalalignment='center', verticalalignment='center')

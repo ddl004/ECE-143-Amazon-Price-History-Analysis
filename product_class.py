@@ -28,6 +28,7 @@ class Product:
 
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
         self.df['standardized'] = self.standardize_prices()
+        self.df['standardized_all'] = stats.zscore(self.df['amazon_price'])
         
         # Check that price history is long enough to calculate derivative
         if self.df['amazon_price'].count() > 2:
