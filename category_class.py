@@ -131,7 +131,15 @@ class Category:
         standard_df = standard_df.mean(1)
         return standard_df
     
-    def average_derivative_prices(self, year=2018, plot=False):
+    def average_derivative_prices(self, year=2018):
+        '''Calculate derivative standardized avg price history
+
+        :param year: Year for which prices are to be processed
+        :type year: int
+        :return: List of dates for which prices are available and their corresponding derivative of prices
+        :rtype: list
+        '''
+        assert isinstance(year, int) and year <=2019
         prices_df = self.product_list[0].df[['amazon_time', 'standardized']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
@@ -142,6 +150,12 @@ class Category:
         return prices_df
     
     def average_price_christmas(self):
+        '''Calculate standardized avg price history of each Christmas
+
+        :return: List of Christmas dates for which prices are available and their corresponding average prices
+        :rtype: list
+        '''
+
         christmas_df = self.product_list[0].df[['amazon_time', 'standardized_all']][(self.product_list[0].df['amazon_time'].dt.day == 25) & (self.product_list[0].df['amazon_time'].dt.month == 12)]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
@@ -152,6 +166,15 @@ class Category:
         return christmas_df
 
     def average_price_per_month(self, year=2018):
+        '''Calculate standardized avg price history
+
+        :param year: Year for which prices are to be processed
+        :type year: int
+        :return: List of months for which prices are available and their corresponding average prices
+        :rtype: list
+        '''
+        assert isinstance(year, int) and year <=2019
+
         prices_df = self.product_list[0].df[['amazon_time', 'standardized_all']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))

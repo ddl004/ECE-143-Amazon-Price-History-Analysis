@@ -115,6 +115,12 @@ def time_price(cat1, cat2, cat3, cat4):
     plot_time_price(data = time_price_df)
     
 def plot_average_derivative_prices(data):
+    '''Plot average derivative price
+
+    :param data: price history
+    :type data: (list, pd.DataFrame, np.ndarray, pd.Series)
+    '''
+    assert isinstance(data, (list, pd.DataFrame, np.ndarray, pd.Series))
     colors = ['b', 'y', 'g', 'r']
     fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
     fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
@@ -137,6 +143,15 @@ def plot_average_derivative_prices(data):
     plt.show()
     
 def average_derivative_prices(cat1, cat2, cat3, cat4):
+    '''Plot derivative price in four subplots
+
+    :param cat1, cat2, cat3, cat4: Each categories
+    :type: Category
+    '''
+    assert isinstance(cat1, Category)
+    assert isinstance(cat2, Category)
+    assert isinstance(cat3, Category)
+    assert isinstance(cat4, Category)
     adp1 = cat1.average_derivative_prices(2018, False)
     adp2 = cat2.average_derivative_prices(2018, False)
     adp3 = cat3.average_derivative_prices(2018, False)
@@ -147,6 +162,12 @@ def average_derivative_prices(cat1, cat2, cat3, cat4):
     plot_average_derivative_prices(data = adp_df)
     
 def plot_christmas_history(data):
+    '''Plot christmas average price history
+
+    :param data: price history
+    :type data: (list, pd.DataFrame, np.ndarray, pd.Series)
+    '''
+    assert isinstance(data, (list, pd.DataFrame, np.ndarray, pd.Series))
     colors = ['b', 'y', 'g', 'r']
     fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
     fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
@@ -163,6 +184,15 @@ def plot_christmas_history(data):
     plt.show()
     
 def christmas_history_price(cat1, cat2, cat3, cat4):
+    '''Plot christmas average price history in four subplots
+
+    :param cat1, cat2, cat3, cat4: Each categories
+    :type: Category
+    '''
+    assert isinstance(cat1, Category)
+    assert isinstance(cat2, Category)
+    assert isinstance(cat3, Category)
+    assert isinstance(cat4, Category)
     apc1 = cat1.average_price_christmas()
     apc2 = cat2.average_price_christmas()
     apc3 = cat3.average_price_christmas()
@@ -173,6 +203,12 @@ def christmas_history_price(cat1, cat2, cat3, cat4):
     plot_christmas_history(data = apc_df)
 
 def plot_average_price_per_month(data):
+    '''Plot average price per month
+
+    :param data: price history
+    :type data: (list, pd.DataFrame, np.ndarray, pd.Series)
+    '''
+    assert isinstance(data, (list, pd.DataFrame, np.ndarray, pd.Series))
     colors = ['b', 'y', 'g', 'r']
     fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
     fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
@@ -189,6 +225,16 @@ def plot_average_price_per_month(data):
     plt.show()
     
 def average_price_per_month_price(cat1, cat2, cat3, cat4):
+    '''Plot average price per month in four subplots
+
+    :param cat1, cat2, cat3, cat4: Each categories
+    :type: Category
+    '''
+    assert isinstance(cat1, Category)
+    assert isinstance(cat2, Category)
+    assert isinstance(cat3, Category)
+    assert isinstance(cat4, Category)
+
     appm1 = cat1.average_price_per_month()
     appm2 = cat2.average_price_per_month()
     appm3 = cat3.average_price_per_month()
