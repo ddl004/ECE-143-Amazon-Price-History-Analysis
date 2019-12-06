@@ -28,6 +28,7 @@ class Product:
 
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
         self.df['standardized'] = self.standardize_prices()
+        self.df['standardized_all'] = stats.zscore(self.df['amazon_price'])
         
         # Check that price history is long enough to calculate derivative
         if self.df['amazon_price'].count() > 2:
@@ -42,7 +43,8 @@ class Product:
         try:
             self.type = product_dict['type']
         except:
-            print("Type data not available")
+            # print("Type data not available")
+            pass
         try:
             if len(product_dict['data']['COUNT_REVIEWS'] >= 10):
                 self.num_reviews = np.median(product_dict['data']['COUNT_REVIEWS'][-10:]).astype(np.int32)
@@ -52,7 +54,7 @@ class Product:
             self.rating = product_dict['data']['RATING'][-1]*100
 
         except:
-            print("Rating and Review data not available")
+            # print("Rating and Review data not available")
             self.num_reviews = None
             self.rating = None
 
@@ -198,7 +200,7 @@ class Product:
         price = list(df_year['amazon_price'].values)
         
         if(not len(price)):
-            print("Product Data not available for Year {0}".format(year))
+            # print("Product Data not available for Year {0}".format(year))
             return None, None, None, None, None
             
         assert len(times) == len(price)
