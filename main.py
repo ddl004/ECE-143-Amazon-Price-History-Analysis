@@ -13,8 +13,8 @@ from math import pi
 
 def plot_time_price(data):
     colors = ['b', 'y', 'g', 'r']
-    fig, axes = plt.subplots(figsize=(17, 14), nrows=2, ncols=2)
-    fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.85, bottom=0.05)
+    fig, axes = plt.subplots(figsize=(20, 17), nrows=2, ncols=2)
+    fig.subplots_adjust(wspace=0.2, hspace=0.20, top=0.95, bottom=0.05)
     locator = mdates.MonthLocator(interval=3)
     formatter = mdates.DateFormatter('%b')
     
@@ -51,7 +51,7 @@ def plot_time_price(data):
                 ax.annotate('',
                     xy=(hol_date, d.loc[hol_date]), xycoords='data',
                     xytext=(-50, 30), textcoords='offset points',
-                    arrowprops=dict(arrowstyle="->"))
+                    arrowprops=dict(arrowstyle="fancy"))
     plt.savefig('line_plot_time_price.jpg')
     plt.show()
 
@@ -74,8 +74,8 @@ def plot_radar(data):
         d = list(hol[1].values); d+= d[:1]
 
         ax.set_rgrids([-0.2, -0.6, 0, 0.4])
-#         ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1), 
-#                      horizontalalignment='center', verticalalignment='center')
+        ax.set_title(title, weight='bold', size='medium', position=(0.5, 1.1), color = color,  
+                     horizontalalignment='center', verticalalignment='center')
         ax.plot(theta, d, color=color)
         ax.fill(theta, d, facecolor=color, alpha=0.25)
 
@@ -85,7 +85,7 @@ def plot_radar(data):
         ax.set_yticks([min_label, 0, max_label])#assuming max_label is greater than 0
         ax.set_yticklabels(['%.1f' % min_label,"0", '%.1f' % max_label], {'color': 'grey', 'size': 9})
         ax.set_ylim(min_label, max_label)
-        ax.legend([title], loc = (-0.15, -0.1))
+        # ax.legend([title], loc = (-0.15, -0.1))
 
 #     fig.text(0.5, 0.965, 'Average Standardized Prices across Four Product Categories',
 #              horizontalalignment='center', color='black', weight='bold',
@@ -215,6 +215,6 @@ if __name__ == "__main__":
     cat4 = Category(products4)
 
     # plot_holiday(cat1, cat2, cat3, cat4)
-    # time_price(cat1, cat2, cat3, cat4)
+    time_price(cat1, cat2, cat3, cat4)
     # average_derivative_prices(cat1, cat2, cat3, cat4)
-    average_price_per_month_price(cat1, cat2, cat3, cat4)
+    # average_price_per_month_price(cat1, cat2, cat3, cat4)
