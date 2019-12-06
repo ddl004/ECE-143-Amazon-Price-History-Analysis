@@ -185,14 +185,17 @@ class Product:
 
     def saleDetector(self, threshold=0.9, year=2018):
         """
-        To detect the sale price and timing
-        :param: threshold
-        :type: dict
-        :return: two list that are price and time 
+        To detect the sale price and timing of the specific year, and sale is defined as
+        lower than average than average * threshold
+        :param: threshold, year
+        :type: int/float, int
+        :return: averger price of sale, timing of each sale, number of sale in one year, 
+        percentage of sale in the year, and decrease percentage of price
+        :rtype: list, list, int, float, float
         """
         assert isinstance(threshold, (int, float))
         assert 0 <= threshold <= 1
-        assert isinstance(year, int) and year <=2019
+        assert isinstance(year, int) and 0 <= year <=2019
         
         
         df_year = self.df[:][self.df['amazon_time'].dt.year == year]

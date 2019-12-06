@@ -24,12 +24,13 @@ class Category:
         self.sale_decrease_percentage = self.calculate_avg_sale_perc()
 
     def calculate_avg_num_sales(self, year=2018):
-        '''Calculate number of sales for products in category
-        
-        :return: the average number and percentage of sale of the category
+        '''Calculate number of sales for products in category on the specific year
+        :param: year
+        :type:int
+        :return: the average number and percentage of sale of the category in one year
         :rtype: int, float
         '''
-        assert isinstance(year, int) and year <=2019
+        assert isinstance(year, int) and 0 <= year <=2019
         
         num = list()
         percents = list()
@@ -46,12 +47,12 @@ class Category:
         
 
     def calculate_avg_sale_perc(self, year=2018):
-        '''Calculate avg sale percentage for products in category
+        '''Calculate avg sale percentage for products in category of the year
         
         :return: the avg sale percentage(e.g. X% off)
         :rtype: float
         '''
-        assert isinstance(year, int) and year <=2019
+        assert isinstance(year, int) and 0 <= year <=2019
 
         decrese_list = list()
         for i in range(len(self.product_list)):
