@@ -11,7 +11,19 @@ import pandas as pd
 
 class Category:
     '''
-        Represent a list of products in a given category
+        Represent a list of products in a given category 
+        Attributes: 
+            product list, number of sales, Sale percentage
+        Functions:
+            Avg Number of sales
+            Avg Sale Percentage
+            Price variatioon
+            Feature Correlation
+            Correlation of price with holidays
+            Price Variation over time
+            Derivative of avg price
+            Avg price on Christmas over multiple years
+            Average price per month over multiple years
     '''
 
     def __init__(self, product_list):
@@ -24,12 +36,13 @@ class Category:
         self.sale_decrease_percentage = self.calculate_avg_sale_perc()
 
     def calculate_avg_num_sales(self, year=2018):
-        '''Calculate number of sales for products in category
-        
-        :return: the average number and percentage of sale of the category
+        '''Calculate number of sales for products in category on the specific year
+        :param: year
+        :type:int
+        :return: the average number and percentage of sale of the category in one year
         :rtype: int, float
         '''
-        assert isinstance(year, int) and year <=2019
+        assert isinstance(year, int) and 0 <= year <=2019
         
         num = list()
         percents = list()
@@ -46,12 +59,12 @@ class Category:
         
 
     def calculate_avg_sale_perc(self, year=2018):
-        '''Calculate avg sale percentage for products in category
+        '''Calculate avg sale percentage for products in category of the year
         
         :return: the avg sale percentage(e.g. X% off)
         :rtype: float
         '''
-        assert isinstance(year, int) and year <=2019
+        assert isinstance(year, int) and 0 <= year <=2019
 
         decrese_list = list()
         for i in range(len(self.product_list)):
@@ -105,6 +118,10 @@ class Category:
         :return: List of dates for which prices are available and their corresponding prices
         :rtype: list
         '''
+
+        assert isinstance(year, int) and 0 <= year <=2019
+        assert isinstance(plot, bool)
+
         top_hols = ['New year', 'Independence Day', 'Thanksgiving Day', 'Christmas Day']
         cal = UnitedStates()
         top_hols_dates = [hol[0] for hol in cal.holidays(year) if hol[1] in top_hols]
@@ -123,6 +140,19 @@ class Category:
         return holiday_df, holiday_avg
 
     def time_price(self, year=2018, plot=False):
+        '''Plot standardized avg daily price history for the given year
+
+        :param year: Year for which prices are to be plotted 
+        :type year: int
+        :param plot: Indicates whether to plot the data or not 
+        :type plot: bool
+        :return: List of dates for which prices are available and their corresponding prices
+        :rtype: list
+        '''
+
+        assert isinstance(year, int) and 0 <= year <=2019
+        assert isinstance(plot, bool)
+
         standard_df = self.product_list[0].df[['amazon_time', 'standardized']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
@@ -131,40 +161,67 @@ class Category:
         standard_df = standard_df.mean(1)
         return standard_df
     
-    def average_derivative_prices(self, year=2018, plot=False):
-        prices_df = self.product_list[0].df[['amazon_time', 'amazon_price']][self.product_list[0].df['amazon_time'].dt.year == year]
+    def average_derivative_prices(self, year=2018):
+        '''Calculate derivative standardized avg price history
+
+        :param year: Year for which prices are to be processed
+        :type year: int
+        :return: List of dates for which prices are available and their corresponding derivative of prices
+        :rtype: list
+        '''
+        assert isinstance(year, int) and year <=2019
+        
+        prices_df = self.product_list[0].df[['amazon_time', 'standardized']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
-            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'amazon_price']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
+            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'standardized']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
         prices_df = prices_df.set_index(['amazon_time'])
         prices_df = prices_df.mean(1)
         prices_df = prices_df.diff().fillna(0)
         return prices_df
     
     def average_price_christmas(self):
-        christmas_df = self.product_list[0].df[['amazon_time', 'amazon_price']][(self.product_list[0].df['amazon_time'].dt.day == 25) & (self.product_list[0].df['amazon_time'].dt.month == 12)]
+        '''Calculate standardized avg price history of each Christmas
+
+        :return: List of Christmas dates for which prices are available and their corresponding average prices
+        :rtype: list
+        '''
+
+        christmas_df = self.product_list[0].df[['amazon_time', 'standardized_all']][(self.product_list[0].df['amazon_time'].dt.day == 25) & (self.product_list[0].df['amazon_time'].dt.month == 12)]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
-            christmas_df = pd.merge_ordered(christmas_df, product.df[['amazon_time', 'amazon_price']][(product.df['amazon_time'].dt.day == 25) & (product.df['amazon_time'].dt.month == 12)], on='amazon_time', suffixes=suffix)
+            christmas_df = pd.merge_ordered(christmas_df, product.df[['amazon_time', 'standardized_all']][(product.df['amazon_time'].dt.day == 25) & (product.df['amazon_time'].dt.month == 12)], on='amazon_time', suffixes=suffix)
         christmas_df = christmas_df.set_index(['amazon_time'])
-        christmas_df = christmas_df.mean(1)
+        
+        christmas_df = christmas_df.mean(axis=1)
         return christmas_df
 
     def average_price_per_month(self, year=2018):
-        prices_df = self.product_list[0].df[['amazon_time', 'amazon_price']][self.product_list[0].df['amazon_time'].dt.year == year]
+        '''Calculate standardized avg price history
+
+        :param year: Year for which prices are to be processed
+        :type year: int
+        :return: List of months for which prices are available and their corresponding average prices
+        :rtype: list
+        '''
+        assert isinstance(year, int) and year <=2019
+
+        prices_df = self.product_list[0].df[['amazon_time', 'standardized_all']][self.product_list[0].df['amazon_time'].dt.year == year]
         for i, product in enumerate(self.product_list[1:]):
             suffix = ("_%d" % i, "_%d" % (i+1))
-            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'amazon_price']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
+            prices_df = pd.merge_ordered(prices_df, product.df[['amazon_time', 'standardized_all']][product.df['amazon_time'].dt.year == year], on='amazon_time', suffixes=suffix)
         prices_df = prices_df.set_index(['amazon_time'])
         prices_df = prices_df.mean(1)
         prices_df = prices_df.groupby(prices_df.index.month).mean()
+        prices_df.index = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         return prices_df
     
 if __name__ == "__main__":
     products = list(np.load('product_electronics_sorted_ph.npy', allow_pickle=True))
     products = [Product(i) for i in products]
     cat = Category(products)
-    print(cat.average_price_per_month())
+    # print(cat.average_price_per_month())
+    print(cat.average_price_christmas())
     # print(cat.num_sales)
     # print(cat.sale_decrease_percentage)
     # cat.feature_correlation('rating','sale_percentage')

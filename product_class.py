@@ -18,7 +18,6 @@ class Product:
     '''
     
     def __init__(self, product_dict):
-        # TODO: Add more asserts
         assert isinstance(product_dict, dict)
         
         self.product_dict = product_dict
@@ -28,6 +27,7 @@ class Product:
 
         self.df['normalized'] = self.normalize_prices(self.df['amazon_price'])
         self.df['standardized'] = self.standardize_prices()
+        self.df['standardized_all'] = stats.zscore(self.df['amazon_price'])
         
         # Check that price history is long enough to calculate derivative
         if self.df['amazon_price'].count() > 2:
@@ -42,7 +42,8 @@ class Product:
         try:
             self.type = product_dict['type']
         except:
-            print("Type data not available")
+            # print("Type data not available")
+            pass
         try:
             if len(product_dict['data']['COUNT_REVIEWS'] >= 10):
                 self.num_reviews = np.median(product_dict['data']['COUNT_REVIEWS'][-10:]).astype(np.int32)
@@ -52,7 +53,7 @@ class Product:
             self.rating = product_dict['data']['RATING'][-1]*100
 
         except:
-            print("Rating and Review data not available")
+            # print("Rating and Review data not available")
             self.num_reviews = None
             self.rating = None
 
@@ -100,10 +101,6 @@ class Product:
         
         assert isinstance(year, int) and year <=2019
         #Plot the amazon time price history for the given year and overlay a graph of holidays on top of that
-        # year_index = [iter_date.year == year for iter_date in self.product_dict['data']['AMAZON_time']]
-        # year_prices = list(self.df['amazon_price'])[np.where(year_index)]
-        # year_dates = self.product_dict['data']['AMAZON_time'][np.where(year_index)]
-        # print('Number of price data points for the year %d: %d'% (year, len(year_dates)))
         df_year = self.df[:][self.df['amazon_time'].dt.year == year]
         
         cal=UnitedStates()
@@ -183,14 +180,17 @@ class Product:
 
     def saleDetector(self, threshold=0.9, year=2018):
         """
-        To detect the sale price and timing
-        :param: threshold
-        :type: dict
-        :return: two list that are price and time 
+        To detect the sale price and timing of the specific year, and sale is defined as
+        lower than average than average * threshold
+        :param: threshold, year
+        :type: int/float, int
+        :return: averger price of sale, timing of each sale, number of sale in one year, 
+        percentage of sale in the year, and decrease percentage of price
+        :rtype: list, list, int, float, float
         """
         assert isinstance(threshold, (int, float))
         assert 0 <= threshold <= 1
-        assert isinstance(year, int) and year <=2019
+        assert isinstance(year, int) and 0 <= year <=2019
         
         
         df_year = self.df[:][self.df['amazon_time'].dt.year == year]
@@ -198,7 +198,7 @@ class Product:
         price = list(df_year['amazon_price'].values)
         
         if(not len(price)):
-            print("Product Data not available for Year {0}".format(year))
+            # print("Product Data not available for Year {0}".format(year))
             return None, None, None, None, None
             
         assert len(times) == len(price)
